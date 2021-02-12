@@ -1,16 +1,70 @@
+$colour1: #3b2f2f;
+$colour2: #fffdd0;
+$colour3: #2a9134;
+
+$form-item-fontsize: 21px;
+
+$padding1: 12px 3%;
+$padding2: 42px 12%;
+
 * {
   box-sizing: border-box;
+  color: $colour1;
   font-family: sans-serif;
   list-style: none;
   margin: 0;
+  outline: none;
   text-decoration: none;
 }
 
+.app {
+  .route-box {
+    padding: $padding1;
+  }
+}
+
+// util components
+.button {
+  background-color: $colour3;
+  border-color: $colour2;
+  border-radius: 12px;
+  color: $colour2;
+  cursor: pointer;
+  font-size: $form-item-fontsize;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  width: 210px;
+}
+
+.input {
+  display: grid;
+  grid-template-columns: 180px auto;
+  margin-bottom: 7px;
+  .input-label {
+    background-color: rgba($color: $colour1, $alpha: 0.6);
+    border-radius: 12px 0 0 12px;
+    color: $colour2;
+    text-align: right;
+  }
+  .input-label:after {
+    content: " :";
+  }
+  .input-box {
+    border-radius: 0 12px 12px 0;
+    padding-left: 12px;
+  }
+  * {
+    font-size: $form-item-fontsize;
+  }
+}
+
 .header {
+  background-color: $colour3;
+  border-bottom: 4px solid $colour2;
   .nav-bar {
     display: flex;
     justify-content: space-between;
-    padding: 12px 3%;
+    padding: $padding1;
   }
   .header-links {
     display: flex;
@@ -18,4 +72,13 @@
       margin-left: 7px;
     }
   }
+  * {
+    color: $colour2;
+  }
+}
+
+.signup {
+  background-image: url("../media/signup-background.jpg");
+  background-size: 100% auto;
+  padding: $padding2;
 }
