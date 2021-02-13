@@ -74,7 +74,15 @@ const SignUp = () => {
         .catch((err) => {
           console.log("axios signup error:", err);
 
-          setState({ ...state, loading: false });
+          setState({
+            ...state,
+            loading: false,
+            error: err.response.data.errorMsg,
+          });
+
+          setTimeout(function () {
+            setState({ ...state, error: "" });
+          }, 3000);
         });
     }
   };
