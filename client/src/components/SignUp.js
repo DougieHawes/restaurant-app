@@ -1,12 +1,19 @@
 import { useState } from "react";
 
-import "./style.min.css";
+import { Link, Redirect } from "react-router-dom";
 
-import { Link } from "react-router-dom";
+import isEmail from "validator/lib/isEmail";
+import isEmpty from "validator/lib/isEmpty";
+import equals from "validator/lib/equals";
+
+import { signup } from "../api/auth";
 
 import { Button1 } from "./utils/buttons";
 import { Input1 } from "./utils/inputs";
+import { Message1 } from "./utils/messages";
 import Loader from "./utils/loader";
+
+import "./style.min.css";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -17,21 +24,59 @@ const SignUp = () => {
   });
 
   const [state, setState] = useState({
-    success: false,
     error: false,
     loading: false,
+    redirect: false,
   });
 
   const { username, email, password, confirmpassword } = formData;
-  const { success, error, loading } = state;
+  const { error, loading, redirect } = state;
 
-  const handleChange = (e) =>
+  const handleChange = (e) => {
+    setState({ ...state, error: "", success: "" });
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log(formData);
+    if (
+      isEmpty(username) ||
+      isEmpty(email) ||
+      isEmpty(password) ||
+      isEmpty(confirmpassword)
+    ) {
+      setState({ ...state, error: "all fields are required" });
+      setTimeout(function () {
+        setState({ ...state, error: "" });
+      }, 3000);
+    } else if (!isEmail(email)) {
+      setState({ ...state, error: "invalid email" });
+      setTimeout(function () {
+        setState({ ...state, error: "" });
+      }, 3000);
+    } else if (!equals(password, confirmpassword)) {
+      setState({ ...state, error: "passwords do not match" });
+      setTimeout(function () {
+        setState({ ...state, error: "" });
+      }, 3000);
+    } else {
+      const data = { email, username, password };
+
+      setState({ ...state, loading: true });
+
+      signup(data)
+        .then((response) => {
+          console.log(response);
+
+          setState({ ...state, redirect: true });
+        })
+        .catch((err) => {
+          console.log("axios signup error:", err);
+
+          setState({ ...state, loading: false });
+        });
+    }
   };
 
   const showSignupForm = () => {
@@ -47,7 +92,6 @@ const SignUp = () => {
           name="email"
           value={email}
           onChange={handleChange}
-          type="email"
           placeholder="enter email..."
         />
         <Input1
@@ -71,14 +115,20 @@ const SignUp = () => {
 
   return (
     <div className="signup">
-      {showSignupForm()}
-      <p>
-        Already have an account? <Link to="/signin">SIGNIN</Link>
-      </p>
-      {success && <p className="alert success">SUCCESS</p>}
-      {error && <p className="alert error">ERROR</p>}
-      {loading && <Loader />}
-      {JSON.stringify(formData)}
+      {!loading ? (
+        <>
+          {showSignupForm()}
+          <p className="sign-toggle">
+            Already have an account? <Link to="/signin">SIGNIN</Link>
+          </p>
+          {error && <Message1 message={error} />}
+        </>
+      ) : (
+        <>
+          <Loader />
+          {redirect && <Redirect to="/signin" />}
+        </>
+      )}
     </div>
   );
 };

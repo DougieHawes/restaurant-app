@@ -6,9 +6,7 @@ export const Input1 = ({
   placeholder,
 }) => (
   <div className="input">
-    <label className="input-label" for={name}>
-      {name}
-    </label>
+    <label className="input-label">{name}</label>
     <input
       className="input-box"
       name={name}
