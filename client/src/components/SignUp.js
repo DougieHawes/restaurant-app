@@ -67,8 +67,6 @@ const SignUp = () => {
 
       signup(data)
         .then((response) => {
-          console.log(response);
-
           setState({ ...state, redirect: true });
         })
         .catch((err) => {
@@ -130,12 +128,10 @@ const SignUp = () => {
             Already have an account? <Link to="/signin">SIGNIN</Link>
           </p>
           {error && <Message1 message={error} />}
-        </>
-      ) : (
-        <>
-          <Loader />
           {redirect && <Redirect to="/signin" />}
         </>
+      ) : (
+        <Loader />
       )}
     </div>
   );
