@@ -9,6 +9,8 @@ import isEmpty from "validator/lib/isEmpty";
 
 import { signin } from "../api/auth";
 
+import { setAuthentication, isAuthenticated } from "../helpers/auth";
+
 import { Button1 } from "./utils/buttons";
 import { Input1 } from "./utils/inputs";
 import { Message1 } from "./utils/messages";
@@ -23,10 +25,11 @@ const SignIn = () => {
     error: false,
     loading: false,
     redirect: false,
+    adminredirect: false,
   });
 
   const { email, password } = formData;
-  const { error, loading, redirect } = state;
+  const { error, loading, redirect, adminredirect } = state;
 
   const handleChange = (e) => {
     setState({ ...state, error: "", success: "" });
@@ -53,7 +56,13 @@ const SignIn = () => {
 
       signin(data)
         .then((response) => {
-          setState({ ...state, redirect: true });
+          setAuthentication(response.data.token, response.data.user);
+
+          if (isAuthenticated() && isAuthenticated().role === 1) {
+            setState({ ...state, adminredirect: true });
+          } else {
+            setState({ ...state, redirect: true });
+          }
         })
         .catch((err) => {
           console.log("axios signup error:", err);
@@ -101,7 +110,8 @@ const SignIn = () => {
             Already have an account? <Link to="/signup">SIGNUP</Link>
           </p>
           {error && <Message1 message={error} />}
-          {redirect && <Redirect to="/dashboard" />}
+          {redirect && <Redirect to="/dashboard/user" />}
+          {adminredirect && <Redirect to="/dashboard/admin" />}
         </>
       ) : (
         <Loader />
