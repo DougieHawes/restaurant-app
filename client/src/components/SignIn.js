@@ -1,8 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { Link, Redirect } from "react-router-dom";
-
-import "./style.min.css";
+import { Link, useHistory } from "react-router-dom";
 
 import isEmail from "validator/lib/isEmail";
 import isEmpty from "validator/lib/isEmpty";
@@ -17,6 +15,8 @@ import { Message1 } from "./utils/messages";
 import Loader from "./utils/loader";
 
 const SignIn = () => {
+  let history = useHistory();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,12 +24,18 @@ const SignIn = () => {
   const [state, setState] = useState({
     error: false,
     loading: false,
-    redirect: false,
-    adminredirect: false,
   });
 
+  useEffect(() => {
+    if (isAuthenticated() && isAuthenticated().role === 1) {
+      history.push("/admin/dashboard");
+    } else if (isAuthenticated() && isAuthenticated().role === 0) {
+      history.push("/user/dashboard");
+    }
+  }, [history]);
+
   const { email, password } = formData;
-  const { error, loading, redirect, adminredirect } = state;
+  const { error, loading } = state;
 
   const handleChange = (e) => {
     setState({ ...state, error: "", success: "" });
@@ -59,9 +65,9 @@ const SignIn = () => {
           setAuthentication(response.data.token, response.data.user);
 
           if (isAuthenticated() && isAuthenticated().role === 1) {
-            setState({ ...state, adminredirect: true });
+            history.push("/admin/dashboard");
           } else {
-            setState({ ...state, redirect: true });
+            history.push("/user/dashboard");
           }
         })
         .catch((err) => {
@@ -110,8 +116,6 @@ const SignIn = () => {
             Already have an account? <Link to="/signup">SIGNUP</Link>
           </p>
           {error && <Message1 message={error} />}
-          {redirect && <Redirect to="/dashboard/user" />}
-          {adminredirect && <Redirect to="/dashboard/admin" />}
         </>
       ) : (
         <Loader />

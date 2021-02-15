@@ -1,5 +1,3 @@
-import "./style.min.css";
-
 import { Switch, Route } from "react-router-dom";
 
 import Header from "./Header";
@@ -7,6 +5,8 @@ import Header from "./Header";
 import Home from "./Home";
 import SignUp from "./SignUp";
 import SignIn from "./SignIn";
+import UserDashboard from "./UserDashboard";
+import AdminDashboard from "./AdminDashboard";
 
 import NotFound from "./NotFound";
 
@@ -19,6 +19,8 @@ const App = () => {
           <Route exact path="/" component={Home} />
           <Route path="/signup" component={SignUp} />
           <Route path="/signin" component={SignIn} />
+          <Route path="/user/dashboard" component={UserDashboard} />
+          <Route path="/admin/dashboard" component={AdminDashboard} />
           <Route component={NotFound} />
         </Switch>
       </main>

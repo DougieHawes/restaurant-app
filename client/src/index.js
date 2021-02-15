@@ -5,6 +5,8 @@ import { BrowserRouter } from "react-router-dom";
 
 import App from "./components/App";
 
+import "./style.min.css";
+
 render(
   <BrowserRouter>
     <App />

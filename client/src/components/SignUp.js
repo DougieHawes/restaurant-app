@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { Link, Redirect } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import isEmail from "validator/lib/isEmail";
 import isEmpty from "validator/lib/isEmpty";
@@ -8,14 +8,15 @@ import equals from "validator/lib/equals";
 
 import { signup } from "../api/auth";
 
+import { isAuthenticated } from "../helpers/auth";
+
 import { Button1 } from "./utils/buttons";
 import { Input1 } from "./utils/inputs";
 import { Message1 } from "./utils/messages";
 import Loader from "./utils/loader";
 
-import "./style.min.css";
-
 const SignUp = () => {
+  let history = useHistory();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -26,11 +27,18 @@ const SignUp = () => {
   const [state, setState] = useState({
     error: false,
     loading: false,
-    redirect: false,
   });
 
+  useEffect(() => {
+    if (isAuthenticated() && isAuthenticated().role === 1) {
+      history.push("/admin/dashboard");
+    } else if (isAuthenticated() && isAuthenticated().role === 0) {
+      history.push("/user/dashboard");
+    }
+  }, [history]);
+
   const { username, email, password, confirmpassword } = formData;
-  const { error, loading, redirect } = state;
+  const { error, loading } = state;
 
   const handleChange = (e) => {
     setState({ ...state, error: "", success: "" });
@@ -67,7 +75,7 @@ const SignUp = () => {
 
       signup(data)
         .then((response) => {
-          setState({ ...state, redirect: true });
+          history.push("/signin");
         })
         .catch((err) => {
           console.log("axios signup error:", err);
@@ -128,7 +136,6 @@ const SignUp = () => {
             Already have an account? <Link to="/signin">SIGNIN</Link>
           </p>
           {error && <Message1 message={error} />}
-          {redirect && <Redirect to="/signin" />}
         </>
       ) : (
         <Loader />
